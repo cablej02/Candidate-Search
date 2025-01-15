@@ -3,12 +3,12 @@ import Nav from './components/Nav';
 
 function App() {
   return (
-    <>
+    <div className="d-flex flex-column align-items-center justify-content-center text-center">
       <Nav />
-      <main>
+      <main >
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
 
