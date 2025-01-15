@@ -3,9 +3,9 @@ import Nav from './components/Nav';
 
 function App() {
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center text-center">
+    <div>
       <Nav />
-      <main >
+      <main className="d-flex flex-column align-items-center justify-content-start text-center">
         <Outlet />
       </main>
     </div>
