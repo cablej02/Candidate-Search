@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API';
 import { Candidate } from '../interfaces/Candidate.interface';
-
+import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 
 const CandidateSearch = () => {
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
@@ -106,12 +106,18 @@ const CandidateSearch = () => {
                     </a>
                     <p className='px-2 pb-2'>Email: <a href={`mailto:${currentCandidate.email}`}>{currentCandidate.email}</a></p>
                 </div>
-                <div>
+                <div className='d-flex gap-5 justify-content-center'>
                     <button
-                        className='btn btn-primary'
+                        className='btn d-flex align-items-center justify-content-center text-danger'
                         onClick={getNextCandidate}
                     >
-                        Next Candidate
+                        <MdRemoveCircleOutline style={{ fontSize: "50px" }}/>
+                    </button>
+                    <button
+                        className='btn d-flex align-items-center justify-content-center text-success'
+                        onClick={getNextCandidate}
+                    >
+                        <MdAddCircleOutline style={{ fontSize: "50px" }}/>
                     </button>
                 </div>
             </>
