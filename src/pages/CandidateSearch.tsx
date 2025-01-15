@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API';
 import { Candidate } from '../interfaces/Candidate.interface';
 
 
 const CandidateSearch = () => {
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
-    const candidates: Candidate[] = [];
+    const candidates = useRef<Candidate[]>([]);
 
     const tempData: Candidate[] = [
         {
@@ -35,7 +35,7 @@ const CandidateSearch = () => {
     //TODO: delete this and go back to API calls
     useEffect(() => {
         //iife to allow async function
-            candidates.push(...tempData);
+            candidates.current.push(...tempData);
             getNextCandidate();
 
     }, []);
@@ -54,7 +54,7 @@ const CandidateSearch = () => {
         //loop over each candidate and get their user info to build the new candidate array
         for (const c of data) {
             const userInfo = await searchGithubUser(c.login);
-            candidates.push({
+            candidates.current.push({
                 id: c.id,
                 name: userInfo.name,
                 login: c.login,
@@ -66,39 +66,56 @@ const CandidateSearch = () => {
                 html_url: c.html_url,
             });
         }
-        console.log(candidates);
+        console.log(candidates.current);
     };
 
     const getNextCandidate = () => {
-        if(candidates.length > 0) {
-            const nextCandidate: Candidate | undefined = candidates.shift();
+        if(candidates.current.length > 0) {
+            const nextCandidate: Candidate | undefined = candidates.current.shift();
             console.log('Next candidate:', nextCandidate);
+            console.log('Remaining candidates:', candidates);
             setCurrentCandidate(nextCandidate);
         } else {
             console.log('No more candidates');
-            return (
-                <div>
-                    <h1>No more candidates</h1>
-                </div>
-            );
+            setCurrentCandidate(undefined);
         }
     };
 
     return (
-        <div className='container content-container'>
-            {currentCandidate &&
-                <div className='card w-25 mx-auto bg-black text-white border-0 rounded-5 overflow-hidden text-start d-flex flex-column gap-1'>
-                    <img src={currentCandidate?.avatar_url} alt={currentCandidate?.name + 'avatar'} />
-                    <h5 className='p-2'>
-                        <span>{currentCandidate?.name ? currentCandidate.name : currentCandidate.login}</span>
-                        <span className='fst-italic'> ({currentCandidate?.login})</span>
-                    </h5>
-                    <p className='px-2'>Location: {currentCandidate.location}</p>
-                    <p className='px-2'>Email: <a href={`mailto:${currentCandidate.email}`}>{currentCandidate.email}</a></p>
-                    <p className='px-2'>Company: {currentCandidate.company}</p>
-                    <p className='px-2 pb-2'>Bio: {currentCandidate.bio}</p>
-                    
+        <div className='container content-container' style={{maxWidth: '400px'}}>
+            {currentCandidate ?
+            <>
+                <div className='card mx-auto bg-black text-white border-0 rounded-5 overflow-hidden text-start d-flex flex-column gap-1'>
+                    <a
+                        href={currentCandidate.html_url}
+                        target='_blank'
+                        rel='noreferrer noopener'
+                        className='text-decoration-none'
+                        style={{color: 'white'}}
+                    >
+                        
+                            <img src={currentCandidate?.avatar_url} alt={currentCandidate?.name + 'avatar'} className='img-fluid' />
+                            <h5 className='p-2'>
+                                <span>{currentCandidate?.name ? currentCandidate.name : currentCandidate.login}</span>
+                                <span className='fst-italic'> ({currentCandidate?.login})</span>
+                            </h5>
+                            <p className='px-2'>Location: {currentCandidate.location}</p>
+                            
+                            <p className='px-2'>Company: {currentCandidate.company}</p>
+                            <p className='px-2 '>Bio: {currentCandidate.bio}</p>
+                    </a>
+                    <p className='px-2 pb-2'>Email: <a href={`mailto:${currentCandidate.email}`}>{currentCandidate.email}</a></p>
                 </div>
+                <div>
+                    <button
+                        className='btn btn-primary'
+                        onClick={getNextCandidate}
+                    >
+                        Next Candidate
+                    </button>
+                </div>
+            </>
+            : <h2>No more candidates are available</h2>
             }
         </div>
     );
