@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MdRemoveCircleOutline } from 'react-icons/md';
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { useSavedCandidates } from '../components/SavedCandidatesContext';
 
 const SavedCandidates = () => {
@@ -39,15 +40,30 @@ const SavedCandidates = () => {
         });
     };
 
+    const getSortIcon = (headerTitle: string) => {
+        if (sorting.headerTitle === headerTitle) {
+            return sorting.direction === "asc" ? <FaSortUp /> : <FaSortDown />;
+        }
+        return <FaSort />;
+    };
+
     return (
         <table className='table table-dark table-striped content-container table-hover table-bordered'>
             <thead>
                 <tr>
                     <th>Image</th>
-                    <th onClick={() => handleSort("name")}>Name</th>
-                    <th onClick={() => handleSort("location")}>Location</th>
-                    <th onClick={() => handleSort("email")}>Email</th>
-                    <th onClick={() => handleSort("company")}>Company</th>
+                    <th onClick={() => handleSort("name")}>
+                        Name {getSortIcon("name")}
+                    </th>
+                    <th onClick={() => handleSort("location")}>
+                        Location {getSortIcon("location")}
+                    </th>
+                    <th onClick={() => handleSort("email")}>
+                        Email {getSortIcon("email")}
+                    </th>
+                    <th onClick={() => handleSort("company")}>
+                        Company {getSortIcon("company")}
+                    </th>
                     <th>Bio</th>
                     <th>Reject</th>
                 </tr>
