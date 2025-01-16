@@ -4,8 +4,14 @@ import { Candidate } from '../interfaces/Candidate.interface';
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 
 const getLocalCandidates = () => {
-    const savedCandidates = localStorage.getItem('savedCandidates');
-    return savedCandidates ? JSON.parse(savedCandidates) : {};
+    try{
+        // get local storage data and parse it, if it exists, otherwise return an empty object
+        const savedCandidates = localStorage.getItem('savedCandidates');
+        return savedCandidates ? JSON.parse(savedCandidates) : {};
+    }catch(err){
+        console.error(err);
+        return {};
+    }
 }
 
 const CandidateSearch = () => {
@@ -41,10 +47,8 @@ const CandidateSearch = () => {
 
     //TODO: delete this and go back to API calls
     useEffect(() => {
-        //iife to allow async function
-            candidates.current.push(...tempData);
-            getNextCandidate();
-
+        candidates.current.push(...tempData);
+        getNextCandidate();
     }, []);
 
     useEffect(() => {
@@ -53,13 +57,13 @@ const CandidateSearch = () => {
             isLoading.current = false;
             return;
         }
-        
+
         //save candidates to local storage
         localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
     },[savedCandidates]);
 
     // useEffect(() => {
-    //     //iife to allow async function
+    //     //iife to allow async function on load
     //     (async () => {
     //         await fetchCandidates();
     //         getNextCandidate();
@@ -88,6 +92,7 @@ const CandidateSearch = () => {
     // };
 
     const getNextCandidate = () => {
+        // if there are still candidates in the array, set the next candidate as the current candidate
         if(candidates.current.length > 0) {
             const nextCandidate: Candidate | undefined = candidates.current.shift();
             console.log('Next candidate:', nextCandidate);
@@ -100,6 +105,7 @@ const CandidateSearch = () => {
     };
 
     const saveCandidate = () => {
+        // if there is a current candidate, add them to the savedCandidates object
         if(currentCandidate){
             const newSavedCandidates:{[id:number]: Candidate} = {...savedCandidates};
             newSavedCandidates[currentCandidate.id] = currentCandidate;
@@ -113,6 +119,7 @@ const CandidateSearch = () => {
 
     return (
         <div className='container content-container' style={{maxWidth: '400px'}}>
+            {/* if there is a currentCandidate, render them */}
             {currentCandidate ?
             <>
                 <div className='card mx-auto bg-black text-white border-0 rounded-5 overflow-hidden text-start d-flex flex-column gap-1'>
@@ -123,7 +130,6 @@ const CandidateSearch = () => {
                         className='text-decoration-none'
                         style={{color: 'white'}}
                     >
-                        
                             <img src={currentCandidate?.avatar_url} alt={currentCandidate?.name + 'avatar'} className='img-fluid' />
                             <h5 className='p-2'>
                                 <span>{currentCandidate?.name ? currentCandidate.name : currentCandidate.login}</span>
