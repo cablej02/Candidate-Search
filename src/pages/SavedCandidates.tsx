@@ -1,30 +1,59 @@
+import { useState } from 'react';
 import { MdRemoveCircleOutline } from 'react-icons/md';
 import { useSavedCandidates } from '../components/SavedCandidatesContext';
 
 const SavedCandidates = () => {
     const { savedCandidates, setSavedCandidates } = useSavedCandidates();
 
+    //sorting state
+    const [sorting, setSorting] = useState<{ headerTitle: string; direction: "asc" | "desc" }>({headerTitle: "name", direction: "desc"});
+
+    // delete a candidate from savedCandidates
     const deleteCandidate = (id: number) => {
         const newCandidates = {...savedCandidates};
         delete newCandidates[id];
         setSavedCandidates(newCandidates);
     }
 
+    // create a sorted array of candidates to display
+    const sortedCandidates = Object.values(savedCandidates).sort((a: any, b: any) => {
+        // get values to compare
+        const aValue = a[sorting.headerTitle];
+        const bValue = b[sorting.headerTitle];
+
+        // return -1 to move a to a lower index than b (a displays first)
+        // return 1 to move a to a higher index than b (b displays first)
+        if (aValue < bValue) return sorting.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sorting.direction === "asc" ? 1 : -1;
+        // return 0 if a and b are equal
+        return 0;
+    });
+
+    // Handle sort column and direction
+    const handleSort = (headerTitle: string) => {
+        setSorting((prev) => {
+            if (prev.headerTitle === headerTitle) {
+                return { headerTitle, direction: prev.direction === "asc" ? "desc" : "asc" };
+            }
+            return { headerTitle, direction: "asc" };
+        });
+    };
+
     return (
         <table className='table table-dark table-striped content-container table-hover table-bordered'>
             <thead>
                 <tr>
                     <th>Image</th>
-                    <th>Name</th>
-                    <th>Location</th>
-                    <th>Email</th>
-                    <th>Company</th>
+                    <th onClick={() => handleSort("name")}>Name</th>
+                    <th onClick={() => handleSort("location")}>Location</th>
+                    <th onClick={() => handleSort("email")}>Email</th>
+                    <th onClick={() => handleSort("company")}>Company</th>
                     <th>Bio</th>
                     <th>Reject</th>
                 </tr>
             </thead>
             <tbody>
-                {Object.values(savedCandidates).map((candidate: any) => (
+                {sortedCandidates.map((candidate: any) => (
                     <tr
                         key={candidate.id}
                         className='text-start align-middle'
