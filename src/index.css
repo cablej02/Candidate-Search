@@ -84,16 +84,6 @@ main {
   width: 100%;
 }
 
-tr {
-  border-radius: 10px;
-  background-color: #000;
-  color: white;
-}
-
-tbody tr:nth-child(odd) {
-  background-color: #333333;
-}
-
 .content-container {
     margin-top: 100px;
 }
