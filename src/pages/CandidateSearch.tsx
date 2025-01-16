@@ -2,23 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 // import { searchGithub, searchGithubUser } from '../api/API';
 import { Candidate } from '../interfaces/Candidate.interface';
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
+import { useSavedCandidates } from '../components/SavedCandidatesContext';
 
-const getLocalCandidates = () => {
-    try{
-        // get local storage data and parse it, if it exists, otherwise return an empty object
-        const savedCandidates = localStorage.getItem('savedCandidates');
-        return savedCandidates ? JSON.parse(savedCandidates) : {};
-    }catch(err){
-        console.error(err);
-        return {};
-    }
-}
 
 const CandidateSearch = () => {
     const isLoading = useRef(true);
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
-    const [savedCandidates, setSavedCandidates] = useState<{[id:number]: Candidate}>(getLocalCandidates());
     const candidates = useRef<Candidate[]>([]);
+    const { savedCandidates, setSavedCandidates } = useSavedCandidates();
 
     const tempData: Candidate[] = [
         {
@@ -47,6 +38,7 @@ const CandidateSearch = () => {
 
     //TODO: delete this and go back to API calls
     useEffect(() => {
+        
         candidates.current.push(...tempData);
         getNextCandidate();
     }, []);
@@ -63,6 +55,7 @@ const CandidateSearch = () => {
     },[savedCandidates]);
 
     // useEffect(() => {
+    //      console.log('Saved Candidates:', savedCandidates);
     //     //iife to allow async function on load
     //     (async () => {
     //         await fetchCandidates();
