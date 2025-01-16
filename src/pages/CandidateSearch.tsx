@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { searchGithub, searchGithubUser } from '../api/API';
+// import { searchGithub, searchGithubUser } from '../api/API';
 import { Candidate } from '../interfaces/Candidate.interface';
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 
+const getLocalCandidates = () => {
+    const savedCandidates = localStorage.getItem('savedCandidates');
+    return savedCandidates ? JSON.parse(savedCandidates) : {};
+}
+
 const CandidateSearch = () => {
+    const isLoading = useRef(true);
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
+    const [savedCandidates, setSavedCandidates] = useState<{[id:number]: Candidate}>(getLocalCandidates());
     const candidates = useRef<Candidate[]>([]);
 
     const tempData: Candidate[] = [
@@ -40,6 +47,17 @@ const CandidateSearch = () => {
 
     }, []);
 
+    useEffect(() => {
+        // skip the first render
+        if(isLoading.current){
+            isLoading.current = false;
+            return;
+        }
+        
+        //save candidates to local storage
+        localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
+    },[savedCandidates]);
+
     // useEffect(() => {
     //     //iife to allow async function
     //     (async () => {
@@ -48,26 +66,26 @@ const CandidateSearch = () => {
     //     })();
     // }, []);
 
-    const fetchCandidates = async () => {
-        const data = await searchGithub();
+    // const fetchCandidates = async () => {
+    //     const data = await searchGithub();
 
-        //loop over each candidate and get their user info to build the new candidate array
-        for (const c of data) {
-            const userInfo = await searchGithubUser(c.login);
-            candidates.current.push({
-                id: c.id,
-                name: userInfo.name,
-                login: c.login,
-                location: userInfo.location,
-                company: userInfo.company,
-                avatar_url: c.avatar_url,
-                email: userInfo.email,
-                bio: userInfo.bio,
-                html_url: c.html_url,
-            });
-        }
-        console.log(candidates.current);
-    };
+    //     //loop over each candidate and get their user info to build the new candidate array
+    //     for (const c of data) {
+    //         const userInfo = await searchGithubUser(c.login);
+    //         candidates.current.push({
+    //             id: c.id,
+    //             name: userInfo.name,
+    //             login: c.login,
+    //             location: userInfo.location,
+    //             company: userInfo.company,
+    //             avatar_url: c.avatar_url,
+    //             email: userInfo.email,
+    //             bio: userInfo.bio,
+    //             html_url: c.html_url,
+    //         });
+    //     }
+    //     console.log(candidates.current);
+    // };
 
     const getNextCandidate = () => {
         if(candidates.current.length > 0) {
@@ -80,6 +98,18 @@ const CandidateSearch = () => {
             setCurrentCandidate(undefined);
         }
     };
+
+    const saveCandidate = () => {
+        if(currentCandidate){
+            const newSavedCandidates:{[id:number]: Candidate} = {...savedCandidates};
+            newSavedCandidates[currentCandidate.id] = currentCandidate;
+            console.log(newSavedCandidates);
+            setSavedCandidates(newSavedCandidates);
+        }else{
+            console.log('No candidate to save');
+        }
+        getNextCandidate();
+    }
 
     return (
         <div className='container content-container' style={{maxWidth: '400px'}}>
@@ -115,7 +145,7 @@ const CandidateSearch = () => {
                     </button>
                     <button
                         className='btn d-flex align-items-center justify-content-center text-success'
-                        onClick={getNextCandidate}
+                        onClick={saveCandidate}
                     >
                         <MdAddCircleOutline style={{ fontSize: "50px" }}/>
                     </button>
