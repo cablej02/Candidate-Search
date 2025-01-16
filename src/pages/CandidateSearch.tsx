@@ -33,6 +33,17 @@ const CandidateSearch = () => {
             email: 'jschmoe@gmail.com',
             bio: 'I am a developer',
             html_url: "https://github/com/jschmoe",
+        },
+        {
+            id: 49294090,
+            name: "Jane Doe",
+            login: "jdoe",
+            location: "Los Angeles, USA",
+            company: "facebook",
+            avatar_url: "https://avatars.githubusercontent.com/u/49294088?v=4",
+            email: 'jane@gmail.com',
+            bio: 'I am a developer',
+            html_url: "https://github/com/jdoe",
         }
     ]
 
@@ -90,6 +101,13 @@ const CandidateSearch = () => {
             const nextCandidate: Candidate | undefined = candidates.current.shift();
             console.log('Next candidate:', nextCandidate);
             console.log('Remaining candidates:', candidates);
+
+            // if the candidate is already saved, skip them
+            if(nextCandidate && savedCandidates[nextCandidate.id]){
+                console.log('Skipping candidate.  Candidate already saved to local storage:', nextCandidate);
+                getNextCandidate();
+                return;
+            }
             setCurrentCandidate(nextCandidate);
         } else {
             console.log('No more candidates');
