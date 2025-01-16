@@ -5,11 +5,12 @@ import { CurrentCandidate } from '../components/CurrentCandidate';
 import { useSavedCandidates } from '../components/SavedCandidatesContext';
 
 const CandidateSearch = () => {
-    const isLoading = useRef(true);
+    // const isLoading = useRef(true);
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
     const candidates = useRef<Candidate[]>([]);
     const { savedCandidates, setSavedCandidates } = useSavedCandidates();
 
+    //TODO: delete this and go back to API calls
     const tempData: Candidate[] = [
         {
             id: 49294088,
@@ -53,17 +54,20 @@ const CandidateSearch = () => {
         getNextCandidate();
     }, []);
 
-    useEffect(() => {
-        // skip the first render
-        if(isLoading.current){
-            isLoading.current = false;
-            return;
-        }
+    //TODO: delete this.  moved to SavedCandidatesContext.tsx
+    // useEffect(() => {
+    //     // skip the first render
+    //     if(isLoading.current){
+    //         isLoading.current = false;
+    //         return;
+    //     }
 
-        //save candidates to local storage
-        localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
-    },[savedCandidates]);
+    //     console.log('Saved Candidates:', savedCandidates);
+    //     //save candidates to local storage
+    //     localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
+    // },[savedCandidates]);
 
+    //TODO: uncomment this to use API calls
     // useEffect(() => {
     //      console.log('Saved Candidates:', savedCandidates);
     //     //iife to allow async function on load
