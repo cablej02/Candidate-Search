@@ -19,13 +19,18 @@ const SavedCandidates = () => {
     // create a sorted array of candidates to display
     const sortedCandidates = Object.values(savedCandidates).sort((a: any, b: any) => {
         // get values to compare
-        const aValue = a[sorting.headerTitle];
-        const bValue = b[sorting.headerTitle];
+        let aValue = a[sorting.headerTitle];
+        let bValue = b[sorting.headerTitle];
+
+        // if null or undefined, sort to end
+        if (!aValue && bValue) return 1;
+        if (aValue && !bValue) return -1;
+        if (!aValue && !bValue) return 0;
 
         // return -1 to move a to a lower index than b (a displays first)
         // return 1 to move a to a higher index than b (b displays first)
-        if (aValue < bValue) return sorting.direction === "asc" ? -1 : 1;
-        if (aValue > bValue) return sorting.direction === "asc" ? 1 : -1;
+        if (aValue.toLowerCase() < bValue.toLowerCase()) return sorting.direction === "asc" ? -1 : 1;
+        if (aValue.toLowerCase() > bValue.toLowerCase()) return sorting.direction === "asc" ? 1 : -1;
         // return 0 if a and b are equal
         return 0;
     });
@@ -52,6 +57,9 @@ const SavedCandidates = () => {
             <thead>
                 <tr>
                     <th>Image</th>
+                    <th onClick={() => handleSort("login")}>
+                        Login {getSortIcon("login")}
+                    </th>
                     <th onClick={() => handleSort("name")}>
                         Name {getSortIcon("name")}
                     </th>
@@ -82,13 +90,15 @@ const SavedCandidates = () => {
                                 style={{width: '75px'}}
                             />
                         </td>
+                        <td className='fw-bold'>{candidate.login}</td>
                         <td className='fw-bold'>
+                            {candidate.name}
                             {/* if candidate name is undefined, just use login */}
-                            {candidate.name ?
+                            {/* {candidate.name ?
                                 <div>{candidate.name}</div> 
                                 : <div>{candidate.login}</div>
                             }
-                            <div className='fst-italic'> ({candidate.login})</div>
+                            <div className='fst-italic'> ({candidate.login})</div> */}
                         </td>
                         <td>{candidate.location}</td>
                         <td>{candidate.email}</td>
