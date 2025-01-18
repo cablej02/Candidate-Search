@@ -53,7 +53,7 @@ const SavedCandidates = () => {
     };
 
     return (
-        <table className='table table-dark table-striped content-container table-hover table-bordered'>
+        <table className='table table-dark table-striped content-container table-hover table-bordered text-wrap text-break'>
             <thead>
                 <tr>
                     <th>Image</th>
@@ -90,7 +90,11 @@ const SavedCandidates = () => {
                                 style={{width: '75px'}}
                             />
                         </td>
-                        <td className='fw-bold'>{candidate.login}</td>
+                        <td className='fw-bold' style={{textDecoration: 'underline'}}>
+                            <a href={candidate.html_url} target='_blank' rel='noreferrer' >
+                                {candidate.login}
+                            </a>
+                        </td>
                         <td className='fw-bold'>
                             {candidate.name}
                             {/* if candidate name is undefined, just use login */}
