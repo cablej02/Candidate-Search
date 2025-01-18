@@ -7,7 +7,7 @@ const SavedCandidates = () => {
     const { savedCandidates, setSavedCandidates } = useSavedCandidates();
 
     //sorting state
-    const [sorting, setSorting] = useState<{ headerTitle: string; direction: "asc" | "desc" }>({headerTitle: "name", direction: "desc"});
+    const [sorting, setSorting] = useState<{ headerTitle: string; direction: "asc" | "desc" }>({headerTitle: "name", direction: "asc"});
 
     // delete a candidate from savedCandidates
     const deleteCandidate = (id: number) => {
