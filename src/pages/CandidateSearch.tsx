@@ -1,102 +1,49 @@
 import { useState, useEffect, useRef } from 'react';
-// import { searchGithub, searchGithubUser } from '../api/API';
+import { searchGithub, searchGithubUser } from '../api/API';
 import { Candidate } from '../interfaces/Candidate.interface';
 import { CurrentCandidate } from '../components/CurrentCandidate';
 import { useSavedCandidates } from '../components/SavedCandidatesContext';
 
 const CandidateSearch = () => {
-    // const isLoading = useRef(true);
+    const isLoaded = useRef(false);
     const [currentCandidate, setCurrentCandidate] = useState<Candidate | null | undefined>(null);
     const candidates = useRef<Candidate[]>([]);
     const { savedCandidates, setSavedCandidates } = useSavedCandidates();
 
-    //TODO: delete this and go back to API calls
-    const tempData: Candidate[] = [
-        {
-            id: 49294088,
-            name: "Alexander Blatzheim",
-            login: "Blatzheim",
-            location: "Berlin, Germany",
-            company: "Ironhack",
-            avatar_url: "https://avatars.githubusercontent.com/u/49294088?v=4",
-            email: 'ablatzheim@gmail.com',
-            bio: 'beep boop',
-            html_url: "https://github.com/Blatzheim",
-        },
-        {
-            id: 49294089,
-            name: "Joe Schmoe",
-            login: "jschmoe",
-            location: "Chicago, USA",
-            company: "github",
-            avatar_url: "https://avatars.githubusercontent.com/u/49294088?v=4",
-            email: 'jschmoe@gmail.com',
-            bio: 'I am a developer',
-            html_url: "https://github/com/jschmoe",
-        },
-        {
-            id: 49294090,
-            name: "Jane Doe",
-            login: "jdoe",
-            location: "Los Angeles, USA",
-            company: "facebook",
-            avatar_url: "https://avatars.githubusercontent.com/u/49294088?v=4",
-            email: 'jane@gmail.com',
-            bio: 'I am a developer',
-            html_url: "https://github/com/jdoe",
-        }
-    ]
-
-    //TODO: delete this and go back to API calls
     useEffect(() => {
-        console.log('Saved Candidates:', savedCandidates);
-        candidates.current.push(...tempData);
-        getNextCandidate();
+         console.log('Saved Candidates:', savedCandidates);
+        //iife to allow async function on load
+        (async () => {
+            await fetchCandidates();
+            getNextCandidate();
+
+            //set loaded to true after candidates are fetched
+            isLoaded.current = true
+        })();
     }, []);
 
-    //TODO: delete this.  moved to SavedCandidatesContext.tsx
-    // useEffect(() => {
-    //     // skip the first render
-    //     if(isLoading.current){
-    //         isLoading.current = false;
-    //         return;
-    //     }
+    const fetchCandidates = async () => {
+        const data = await searchGithub();
 
-    //     console.log('Saved Candidates:', savedCandidates);
-    //     //save candidates to local storage
-    //     localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
-    // },[savedCandidates]);
-
-    //TODO: uncomment this to use API calls
-    // useEffect(() => {
-    //      console.log('Saved Candidates:', savedCandidates);
-    //     //iife to allow async function on load
-    //     (async () => {
-    //         await fetchCandidates();
-    //         getNextCandidate();
-    //     })();
-    // }, []);
-
-    // const fetchCandidates = async () => {
-    //     const data = await searchGithub();
-
-    //     //loop over each candidate and get their user info to build the new candidate array
-    //     for (const c of data) {
-    //         const userInfo = await searchGithubUser(c.login);
-    //         candidates.current.push({
-    //             id: c.id,
-    //             name: userInfo.name,
-    //             login: c.login,
-    //             location: userInfo.location,
-    //             company: userInfo.company,
-    //             avatar_url: c.avatar_url,
-    //             email: userInfo.email,
-    //             bio: userInfo.bio,
-    //             html_url: c.html_url,
-    //         });
-    //     }
-    //     console.log(candidates.current);
-    // };
+        //loop over each candidate and get their user info to build the new candidate array
+        for (const c of data) {
+            const userInfo = await searchGithubUser(c.login);
+            if(userInfo){
+                candidates.current.push({
+                    id: c.id,
+                    name: userInfo.name,
+                    login: c.login,
+                    location: userInfo.location,
+                    company: userInfo.company,
+                    avatar_url: c.avatar_url,
+                    email: userInfo.email,
+                    bio: userInfo.bio,
+                    html_url: c.html_url,
+                });
+            }
+        }
+        console.log(candidates.current);
+    };
 
     const getNextCandidate = () => {
         // if there are still candidates in the array, set the next candidate as the current candidate
@@ -140,7 +87,7 @@ const CandidateSearch = () => {
                     getNextCandidate={getNextCandidate}
                     saveCandidate={saveCandidate}
                 />
-                : <h2>No more candidates are available</h2>
+                : isLoaded.current ? <h2>No more candidates are available</h2> : <h2>Fetching candidates...</h2>
             }
         </div>
     );
