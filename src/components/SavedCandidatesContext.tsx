@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Candidate } from '../interfaces/Candidate.interface';
 
 // helper interface to define the context type
@@ -33,9 +33,16 @@ export const SavedCandidatesProvider = ({children}: {children: React.ReactNode})
     }
 
     const [savedCandidates, setSavedCandidates] = useState<{[id:number]: Candidate}>(getLocalCandidates());
+    const isLoaded = useRef(false);
 
     useEffect(() => {
-        console.log('Saved Candidates:', savedCandidates);
+        // don't save candidates on initial load
+        if(!isLoaded.current){
+            isLoaded.current = true;
+            return;
+        }
+
+        console.log('Saving Candidates:', savedCandidates);
         localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
     },[savedCandidates]);
 
