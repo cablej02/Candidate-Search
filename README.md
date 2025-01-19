@@ -1,33 +1,23 @@
-# React + TypeScript + Vite
+# Candidate Search
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
 
-Currently, two official plugins are available:
+This is a tool to help search for potential candidates for your company.  Review a selection of GitHub profiles to reject or save for future review.
 
-* [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md), which uses [Babel](https://babeljs.io/) for Fast Refresh
-* [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc), which uses [SWC](https://swc.rs/) for Fast Refresh
+## Usage
 
-## Expanding the ESLint configuration
+Deployed: [https://candidate-search-te0y.onrender.com/](https://candidate-search-te0y.onrender.com/)
 
-If you're developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Reject or save candidates populated by using the buttons at the bottom of the candidate card.
 
-* Configure the top-level `parserOptions` property as follows:
+![Search Candidates](src/assets/candidateSearch.PNG)
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+Load all saved candidates to review further.  Reject them by using the red button in the furthest right column.
 
-* Replace `plugin:@typescript-eslint/recommended` with `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`.
-* Optionally, add `plugin:@typescript-eslint/stylistic-type-checked`.
-* Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` and `plugin:react/jsx-runtime` to the `extends` list.
+![Saved Candidates](src/assets/savedCandidates.png)
 
----
-© 2024 edX Boot Camps LLC. Confidential and Proprietary. All Rights Reserved.
+## Questions
+
+GitHub: [cablej02](https://github.com/cablej02)
+
+If you have additional questions, please contact me by email at [cablej02@gmail.com](mailto:cablej02@gmail.com)
